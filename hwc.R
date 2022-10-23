@@ -36,11 +36,16 @@ plot(data3$Species)
 ggplot(data3,aes(x=Species))+
   geom_bar()
 
-# group bar plots
+# group bar plots of species vs attack category( death and injury)
+library(ggplot2)
 ggplot(data3,aes(x=Species,fill=Attack))+
-  geom_bar(position = "dodge")
-
-
+  geom_bar(position = "dodge")+
+  labs(y="Frequency of attacks", x="Species")+
+  theme(panel.grid = element_blank(), # it removes the background grids
+        plot.margin = unit(c(1,1,1,1),units="cm"), # put a margin around the graph
+        legend.title = element_blank(), # remove the title of legend
+          legend.position = c(0.9,0.9)) # position the legend at top right
+    
 
 
 
