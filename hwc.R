@@ -26,7 +26,19 @@ percentage_species
 library(gmodels)
 CrossTable(data3$code_attack, data3$Location)# 1 is death and 0 is injury of humans
 
+# day 2----
+#showing frequency of event by different species in bar plot
+plot(data3$Species)
 
+# lets use ggplot2
+
+
+ggplot(data3,aes(x=Species))+
+  geom_bar()
+
+# group bar plots
+ggplot(data3,aes(x=Species,fill=Attack))+
+  geom_bar(position = "dodge")
 
 
 
