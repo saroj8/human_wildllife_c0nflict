@@ -40,16 +40,23 @@ ggplot(data3,aes(x=Species))+
   geom_bar()
 
 # group bar plots of species vs attack category(death and injury)----
-ggplot(data3,aes(x=Species,fill=Attack))+
+fig2<-ggplot(data3,aes(x=Species,fill=Attack))+
   geom_bar(position = "dodge")+
   labs(y="Frequency of attacks", x="Species")+
   theme(panel.grid = element_blank(), # it removes the background grids
+        panel.background = element_blank(),
+        text=element_text(size = 10, family = "Arial"),
+        axis.line = element_line(size = 0.7, color = "black"),
         plot.margin = unit(c(1,1,1,1),units="cm"), # put a margin around the graph
         legend.title = element_blank(), # remove the title of legend
-          legend.position = c(0.9,0.9)) # position the legend at top right
- #saving in high resolution
-ggsave("frequency_Attcaks.tiff", width = 12, height = 12, units=c("cm"), dpi = 400)
- 
+        legend.position = "top",
+        legend.direction = "horizontal")
+fig2 +
+  scale_fill_manual(values = c("red","blue"))
+
+#saving in high resolution
+ggsave("june26.tiff", width = 12, height = 12, units=c("cm"), dpi = 400)
+
 
 # temporal pattern of human injuries and fatalities----
 # adding a season column-------
@@ -62,16 +69,16 @@ data4<-data3 %>%
       Month %in% 3:5 ~ "Spring",
       TRUE~ "Summer"
     ))
- head(data4)
+head(data4)
 #plot the data of season into graph
- ggplot(data4, aes(x=Season))+
-   geom_bar()
- 
- #see the wildlife events species wise----- (overall table1 in manuscript)
- 
+ggplot(data4, aes(x=Season))+
+  geom_bar()
+
+#see the wildlife events species wise----- (overall table1 in manuscript)
+
 species_table<- table(data4$Species, data4$Year)
 species_table 
- 
+
 #making data frame for data4------
 data5<- data.frame(data4)
 data5
@@ -108,26 +115,31 @@ ggplot(data5,aes(x=Species,fill=Attack))+
         plot.margin = unit(c(1,1,1,1),units="cm"), # put a margin around the graph
         legend.title = element_blank(), # remove the title of legend
         legend.position = c(0.9,0.9)+ # position the legend at top right
-        scale_fill_brewer(palette="Set1"))
-        
+          scale_fill_brewer(palette="Set1"))
+
 ##### Temporal pattern of wildlife attacks ------
 
 # frequency of attacks in year
 
 time_data<- data.frame(Year=factor(c(2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020)),
-               Attacks=c(11,38,32,38,36,31,27,55,24,94,63,56))
+                       Attacks=c(11,38,32,38,36,31,27,55,24,94,63,56))
 time_data
 
-ggplot(time_data, aes(x=Year, y=Attacks)) +
-  geom_bar(stat="identity") +
-
-  theme(panel.grid = element_blank(),# it removes the background grids
-        panel.background = element_blank(),# remove background of whole panel 
+fig4<-ggplot(time_data, aes(x=Year, y=Attacks)) +
+  geom_col() +
+  
+  theme(panel.grid = element_blank(), # it removes the background grids
+        panel.background = element_blank(),
+        text=element_text(size = 10, family = "Arial"),
+        axis.line = element_line(size = 0.7, color = "black"),
         plot.margin = unit(c(1,1,1,1),units="cm"), # put a margin around the graph
         legend.title = element_blank(), # remove the title of legend
-        legend.position = c(0.9,0.9))
+        legend.position = "top",
+        legend.direction = "horizontal")
+fig4
 
-ggsave("Manuscript_fig3.tiff",width=15, height = 15, units = c("cm"), dpi=400)
+
+ggsave("fig4.tiff",width=15, height = 15, units = c("cm"), dpi=400)
 
 #***************for line to find regression**************************
 ggplot(time_data, aes(x=Year, y=Attacks, group=1)) +
@@ -137,9 +149,9 @@ ggplot(time_data, aes(x=Year, y=Attacks, group=1)) +
         plot.margin = unit(c(1,1,1,1),units="cm"), # put a margin around the graph
         legend.title = element_blank(), # remove the title of legend
         legend.position = c(0.9,0.9)) # position the legend at top right
-          
+
 time_data1<- data.frame(Year=(c(2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020)),
-                       Attacks=c(11,38,32,38,36,31,27,55,24,94,63,56))
+                        Attacks=c(11,38,32,38,36,31,27,55,24,94,63,56))
 str(time_data1)
 time_data1
 regression<-lm.fit<-lm(Attacks~Year, data=time_data1)
@@ -160,15 +172,19 @@ summary(regression)
 plot(Year, Attacks, pch = 16, col = "blue", xlab = "Year", ylab = "Attacks")
 #plotting using ggplot2
 ggplot(time_data1, aes(x = Year, y = Attacks)) +
-  geom_point() +
-  geom_smooth(method = "lm", se = FALSE, color = "black") +
+  geom_point(color= "red") +
+  geom_smooth(method = "lm", se = FALSE, color = "blue") +
   labs(x = "Year", y = "Attacks") +
   theme(panel.grid = element_blank(), # it removes the background grids
+        panel.background = element_blank(),
+        text=element_text(size = 10, family = "Arial"),
+        axis.line = element_line(size = 0.7, color = "black"),
         plot.margin = unit(c(1,1,1,1),units="cm"), # put a margin around the graph
         legend.title = element_blank(), # remove the title of legend
-        legend.position = c(0.9,0.9))+
-  labs(y="Number of incidents", x="Year")
-ggsave("trendline.tiff", width= 15, height=15, units=c("cm"), dpi=400)
+        legend.position = "top",
+        legend.direction = "horizontal")
+labs(y="Number of incidents", x="Year")
+ggsave("june26_trend_line.tiff", width= 15, height=15, units=c("cm"), dpi=400)
 
 # Adding a trend line
 trend_line <- lm(Attacks ~ Year)  # Linear regression model
@@ -185,20 +201,24 @@ mean(attacks)
 year_attack<- table(data5$Year)
 year_attack
 chisq.test(year_attack)
- count(data5$code_attack)
- 
-#season wise wildlife attacks
- ggplot(data5, aes(x= Species, fill= Season))+
-   geom_bar(position = position_dodge(0.5), width = 0.4)+
-   theme(panel.grid = element_blank(), # it removes the background grids
-         panel.background = element_blank(),
-         plot.margin = unit(c(1,1,1,1),units="cm"), # put a margin around the graph
-         legend.title = element_blank(), # remove the title of legend
-         legend.position = c(0.9,0.9))+
-   labs(y="Number of incidents", x="wildlife species")
+count(data5$code_attack)
 
- ggsave("fig4.tiff", width=15, height=15, units=c("cm"), dpi=400)
- 
+#season wise wildlife attacks
+fig5<-ggplot(data5, aes(x= Species, fill= Season))+
+  geom_bar(position = position_dodge(0.5), width = 0.4)+
+  theme(panel.grid = element_blank(), # it removes the background grids
+        panel.background = element_blank(),
+        text=element_text(size = 10, family = "Arial"),
+        axis.line = element_line(size = 0.7, color = "black"),
+        plot.margin = unit(c(1,1,1,1),units="cm"), # put a margin around the graph
+        legend.title = element_blank(), # remove the title of legend
+        legend.position = "top",
+        legend.direction = "horizontal")+
+  labs(y="Number of incidents", x="wildlife species")
+fig5 +
+  scale_fill_manual(values = c("red","blue","green","yellow"))
+ggsave("june26_seasonVsWildlife.tiff", width=15, height=15, units=c("cm"), dpi=400)
+
 season_table<- table(data5$Species, data5$Season)
 season_table
 chisq.test(season_table) 
@@ -212,16 +232,23 @@ barplot(month_table)
 month_data<-data.frame(Months=c("Jan","Feb","March","April","May","June","July","Aug","Sep","Oct","Nov","Dec"),
                        Frequency=c(42,39,44,39,55,31,28,28,42,37,42,76))
 month_data 
- 
+
 # now plotting in graph
-ggplot(month_data, aes(x= Months, y= Frequency))+
+fig6<- ggplot(month_data, aes(x= Months, y= Frequency))+
   geom_col()+
   theme(panel.grid = element_blank(), # it removes the background grids
+        panel.background = element_blank(),
+        text=element_text(size = 10, family = "Arial"),
+        axis.line = element_line(size = 0.7, color = "black"),
         plot.margin = unit(c(1,1,1,1),units="cm"), # put a margin around the graph
         legend.title = element_blank(), # remove the title of legend
-        legend.position = c(0.9,0.9))+
+        legend.position = "top",
+        legend.direction = "horizontal")+
   labs(y="Number of incidents", x="Months")
-ggsave("fig5.tiff", width=15, height=15, units=c("cm"), dpi=400)
+
+fig6
+
+ggsave("fig6.tiff", width=15, height=15, units=c("cm"), dpi=400)
 
 # Spatial pattern of wildlife attacks on human************************************************
 data5
@@ -244,14 +271,21 @@ chisq.test(f, simulate.p.value = TRUE)
 data_l<-read_xlsx("hwc_data1.xlsx" )
 data_l
 
-ggplot(data_l, aes(x=Species, fill=Location))+
+fig7<-ggplot(data_l, aes(x=Species, fill=Location))+
   geom_bar(position = position_dodge(0.5), width = 0.4)+
   theme(panel.grid = element_blank(), # it removes the background grids
+        panel.background = element_blank(),
+        text=element_text(size = 10, family = "Arial"),
+        axis.line = element_line(size = 0.7, color = "black"),
         plot.margin = unit(c(1,1,1,1),units="cm"), # put a margin around the graph
         legend.title = element_blank(), # remove the title of legend
-        legend.position = c(0.9,0.9))+
+        legend.position = "top",
+        legend.direction = "horizontal")+
   labs(y="Number of incidents", x="wildlife species")
-ggsave("fig6.tiff", width= 15, height=15, units=c("cm"), dpi=400)
+fig7
+fig7 +
+  scale_fill_manual(values = c("red","blue","green","yellow"))
+ggsave("june26_locationVsSpecies.tiff", width= 15, height=15, units=c("cm"), dpi=400)
 chisq.test(data_l$Species, data_l$Location, simulate.p.value = TRUE)
 
 # Logistic regression*********************************************************************
